@@ -129,6 +129,12 @@ Arrival times are drawn from a random process around the average rate. Format
 (letter vs. text) follows the companion's preference; letters are rarer than texts
 for "both".
 
+**Companions write first.** Spontaneous deliveries never wait on the user:
+- **First contact:** shortly after a companion is added (within minutes, while
+  the app is open), they send an introductory letter or text.
+- **Unprompted follow-ups:** a companion may send another item before the user
+  replies, or open a new topic, at their normal rate.
+
 **Catch-up on open:** compute arrivals between `lastOpenedAt` and now, cap at
 **3 per companion** (keep the most recent), timestamp each with its drawn arrival
 time, write them, then update `lastOpenedAt`.
