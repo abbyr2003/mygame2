@@ -5,6 +5,7 @@ import { RoomPanel } from './rooms/RoomPanel'
 import { ContactsRoom } from './rooms/contacts/ContactsRoom'
 import { MessagesRoom } from './rooms/messages/MessagesRoom'
 import { LettersRoom } from './rooms/letters/LettersRoom'
+import { SourceRoom } from './rooms/source/SourceRoom'
 import { VeilNotice } from './components/VeilNotice'
 import { playChime } from './chime'
 
@@ -16,7 +17,7 @@ function App(): React.JSX.Element {
   const [veil, setVeil] = useState(false)
   const [twitch, setTwitch] = useState(false)
   // Source conversation to show when the crystal ball opens (set by "Ask Source about them").
-  const [, setSourceConversationId] = useState<string | null>(null)
+  const [sourceConversationId, setSourceConversationId] = useState<string | null>(null)
   const soundOn = useRef(true)
 
   const refreshUnread = useCallback(() => {
@@ -49,7 +50,10 @@ function App(): React.JSX.Element {
     }
   }, [refreshUnread])
 
-  const close = useCallback(() => setOpenRoom(null), [])
+  const close = useCallback(() => {
+    setOpenRoom(null)
+    setSourceConversationId(null)
+  }, [])
   const title = HOTSPOTS.find((h) => h.room === openRoom)?.label ?? ''
 
   const askSource = useCallback((conversationId: string) => {
@@ -65,6 +69,8 @@ function App(): React.JSX.Element {
         return <MessagesRoom />
       case 'letters':
         return <LettersRoom />
+      case 'source':
+        return <SourceRoom initialConversationId={sourceConversationId} />
       default:
         return null
     }
