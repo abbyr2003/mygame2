@@ -1519,3 +1519,130 @@ select.input {
   font-size: 18px;
   line-height: 1.6;
 }
+
+/* ---------- settings ---------- */
+
+.settings {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background: var(--well);
+}
+.settings-panel {
+  position: relative;
+  width: min(720px, 100%);
+  height: fit-content;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.settings-panel section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.settings-panel .form-title {
+  margin: 0;
+}
+.hearth-fire {
+  position: absolute;
+  right: 24px;
+  top: 20px;
+  width: 28px;
+  height: 36px;
+  background: var(--gold);
+  clip-path: polygon(50% 0, 70% 30%, 100% 45%, 85% 100%, 15% 100%, 0 45%, 30% 30%);
+  box-shadow: inset 0 -12px 0 #c1272d;
+  animation: book 1.2s infinite steps(3);
+}
+.key-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+.key-row .field {
+  margin: 0;
+}
+.status-pill {
+  align-self: flex-start;
+  margin: 0;
+  padding: 3px 10px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 3px solid var(--outline);
+  background: var(--parchment-dim);
+}
+.status-pill.on {
+  background: var(--teal);
+}
+.model-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.model-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: var(--parchment-dim);
+  border: 4px solid var(--outline);
+  cursor: pointer;
+}
+.model-card input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.model-card.selected {
+  background: var(--gold);
+  box-shadow: inset 2px 2px 0 #ffd88a;
+}
+.model-card:focus-within {
+  outline: 3px solid var(--teal);
+}
+.model-name {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.model-card .hint {
+  margin: 0;
+}
+.keep-path {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  word-break: break-all;
+  user-select: text;
+}
+.settings-panel .btn {
+  align-self: flex-start;
+}
+
+/* ---------- first-open welcome ---------- */
+
+.welcome {
+  position: fixed;
+  left: 50%;
+  top: 32px;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: min(560px, 90vw);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+.welcome p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.45;
+}
+.welcome strong {
+  color: var(--gold);
+  font-weight: 600;
+}
