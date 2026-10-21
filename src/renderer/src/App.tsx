@@ -4,6 +4,7 @@ import { HOTSPOTS, type RoomId } from './cottage/hotspots'
 import { RoomPanel } from './rooms/RoomPanel'
 import { ContactsRoom } from './rooms/contacts/ContactsRoom'
 import { MessagesRoom } from './rooms/messages/MessagesRoom'
+import { LettersRoom } from './rooms/letters/LettersRoom'
 import { VeilNotice } from './components/VeilNotice'
 import { playChime } from './chime'
 
@@ -62,6 +63,8 @@ function App(): React.JSX.Element {
         return <ContactsRoom onAskSource={askSource} />
       case 'messages':
         return <MessagesRoom />
+      case 'letters':
+        return <LettersRoom />
       default:
         return null
     }

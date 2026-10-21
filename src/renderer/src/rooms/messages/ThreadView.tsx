@@ -2,20 +2,13 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import type { Companion, Message } from '../../../../shared/types'
 import { Portrait } from '../../components/Portrait'
 import { Translatable } from '../../components/Translatable'
+import { formatWhen } from '../../format'
 
 interface Props {
   companion: Companion
   messages: Message[]
   onSend: (body: string) => Promise<void>
 }
-
-export const formatWhen = (iso: string): string =>
-  new Date(iso).toLocaleString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit'
-  })
 
 export function ThreadView({ companion: c, messages, onSend }: Props): React.JSX.Element {
   const [draft, setDraft] = useState('')
