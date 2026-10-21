@@ -6,6 +6,7 @@ import { ContactsRoom } from './rooms/contacts/ContactsRoom'
 import { MessagesRoom } from './rooms/messages/MessagesRoom'
 import { LettersRoom } from './rooms/letters/LettersRoom'
 import { SourceRoom } from './rooms/source/SourceRoom'
+import { LibraryRoom } from './rooms/library/LibraryRoom'
 import { VeilNotice } from './components/VeilNotice'
 import { playChime } from './chime'
 
@@ -71,6 +72,8 @@ function App(): React.JSX.Element {
         return <LettersRoom />
       case 'source':
         return <SourceRoom initialConversationId={sourceConversationId} />
+      case 'library':
+        return <LibraryRoom />
       default:
         return null
     }
