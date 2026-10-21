@@ -1,0 +1,328 @@
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spirit Keep - The Cat's Ledger</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Pixelify+Sans:wght@400..700&display=swap');
+
+    :root {
+      --purple-deep: #2a1846;
+      --midnight-blue: #141a3a;
+      --candle-gold: #e8b04a;
+      --teal: #3fb8a8;
+      --parchment: #f1e2c0;
+      --ink: #2b1d14;
+      --wood-dark: #3a2318;
+      --wood-mid: #5a3a2a;
+      --wood-light: #8b5e3c;
+      --bg-dark: #140c24;
+    }
+
+    * {
+      image-rendering: pixelated;
+      cursor: url('https://api.iconify.design/pixelarticons:mouse-pointer.svg') 0 0, auto;
+    }
+
+    .stardew-frame {
+      background: var(--wood-dark);
+      border: 6px solid #1a0f0a;
+      box-shadow: 
+        inset 6px 6px 0px var(--wood-light),
+        inset -6px -6px 0px #22130d,
+        0 20px 50px rgba(0,0,0,0.8);
+    }
+
+    .stardew-panel-inner {
+      border: 4px solid #1a0f0a;
+      box-shadow: inset 4px 4px 0px rgba(0,0,0,0.2);
+    }
+
+    .stardew-button {
+      background: var(--wood-mid);
+      border: 4px solid #1a0f0a;
+      box-shadow: 
+        inset 2px 2px 0px var(--wood-light),
+        2px 2px 0px 0px rgba(0,0,0,0.5);
+      font-family: 'Pixelify Sans', sans-serif;
+      text-transform: uppercase;
+      color: var(--parchment);
+      transition: transform 0.05s;
+    }
+
+    .stardew-button:hover {
+      background: var(--wood-light);
+    }
+
+    .stardew-button:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.5);
+    }
+
+    .stardew-input {
+      background: rgba(0,0,0,0.1);
+      border: 3px solid #1a0f0a;
+      box-shadow: inset 2px 2px 0px rgba(0,0,0,0.1);
+      padding: 8px;
+      font-family: 'Pixelify Sans', sans-serif;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .parchment-texture {
+      background-color: var(--parchment);
+      background-image: url("https://www.transparenttextures.com/patterns/paper-fibers.png");
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 14px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #d4c19d;
+      border-left: 4px solid #1a0f0a;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: var(--wood-mid);
+      border: 2px solid #1a0f0a;
+      box-shadow: inset 2px 2px 0px var(--wood-light);
+    }
+
+    .pixel-checkbox {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #1a0f0a;
+      background: var(--parchment);
+      position: relative;
+    }
+
+    .pixel-checkbox:checked::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--wood-dark);
+      top: 2px;
+      left: 2px;
+    }
+
+    .wax-seal-dot {
+      width: 10px;
+      height: 10px;
+      border: 1px solid rgba(0,0,0,0.4);
+      box-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+    }
+
+    .pixel-dash-card {
+      border: 4px dashed #1a0f0a;
+      background: rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body class="bg-[#140c24] font-['Pixelify_Sans']">
+  <div class="w-[1440px] h-[900px] relative flex items-center justify-center overflow-hidden" data-sd-id="1">
+    
+    <!-- Background: Cottage (Dimmed) -->
+    <div class="absolute inset-0 z-0" data-sd-id="2">
+      <img src="https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/9a7eefce-d127-49e8-a2bb-2a29b84eb1a5/brand-assets/cottage-home/cottage-home-screen.png" alt="Cottage Interior" class="w-full h-full object-cover brightness-[0.2] blur-[1px]" data-sd-id="3">
+    </div>
+
+    <!-- Navigation Overlay -->
+    <div class="absolute top-10 left-10 z-50" data-sd-id="4">
+      <a href="#" id="nav-back-to-cottage" class="stardew-button px-4 py-3 flex items-center gap-2 text-sm group" data-sd-id="5">
+        <iconify-icon icon="pixelarticons:close-box" class="text-2xl group-hover:scale-110 transition-transform"></iconify-icon>
+        back to cottage
+      </a>
+    </div>
+
+    <!-- Main Ledger Panel -->
+    <div class="relative z-10 w-[1240px] h-[760px] stardew-frame flex flex-col" data-sd-id="6">
+      
+      <!-- Header -->
+      <div class="h-16 flex items-center justify-between px-8 border-b-4 border-[#1a0f0a]" data-sd-id="7">
+        <div class="flex items-center gap-4" data-sd-id="8">
+          <iconify-icon icon="pixelarticons:notes" class="text-4xl text-[var(--candle-gold)]"></iconify-icon>
+          <h1 class="text-3xl tracking-[0.1em] text-[var(--parchment)]" data-sd-id="9">THE CAT'S LEDGER</h1>
+        </div>
+        <div class="flex items-center gap-2" data-sd-id="10">
+          <span class="text-[var(--parchment)] opacity-50 text-xs" data-sd-id="11">COMPANIONS: 3/10</span>
+          <iconify-icon icon="pixelarticons:human-handsup" class="text-2xl text-[var(--teal)]"></iconify-icon>
+        </div>
+      </div>
+
+      <div class="flex flex-1 overflow-hidden" data-sd-id="12">
+        <!-- Left Side: Companion Grid -->
+        <div class="w-1/2 p-6 border-r-4 border-[#1a0f0a] overflow-y-auto custom-scrollbar bg-[#2b1d14]" data-sd-id="13">
+          <div class="grid grid-cols-2 gap-4" data-sd-id="14">
+            
+            <!-- Companion Card 1 -->
+            <div class="bg-[#5a3a2a] border-4 border-[#1a0f0a] p-4 relative flex items-start gap-4 hover:bg-[#6a4a3a] transition-colors" data-sd-id="15">
+              <div class="w-20 h-20 border-4 border-[#1a0f0a] bg-[var(--midnight-blue)] p-1" data-sd-id="16">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Elara&amp;backgroundColor=2a1846" alt="Elara" class="w-full h-full" data-sd-id="17">
+              </div>
+              <div class="flex-1 flex flex-col gap-1" data-sd-id="18">
+                <div class="flex justify-between items-start" data-sd-id="19">
+                  <h3 class="text-[var(--parchment)] text-lg leading-none" data-sd-id="20">Elara</h3>
+                  <div class="wax-seal-dot bg-purple-600" data-sd-id="21"></div>
+                </div>
+                <span class="text-[var(--candle-gold)] text-[10px] uppercase tracking-wider" data-sd-id="22">Spirit Guide</span>
+                <span class="bg-[#3a2318] text-[#3fb8a8] text-[9px] px-2 py-0.5 inline-block w-fit mt-1 border border-[#1a0f0a]" data-sd-id="23">CHATTY</span>
+              </div>
+              <div class="absolute bottom-2 right-2" data-sd-id="24">
+                <iconify-icon icon="pixelarticons:star" class="text-[var(--candle-gold)] text-xs"></iconify-icon>
+              </div>
+            </div>
+
+            <!-- Companion Card 2 -->
+            <div class="bg-[#5a3a2a] border-4 border-[#1a0f0a] p-4 relative flex items-start gap-4" data-sd-id="25">
+              <div class="w-20 h-20 border-4 border-[#1a0f0a] bg-[#1a2b24] p-1" data-sd-id="26">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Orion&amp;backgroundColor=1a1a1a" alt="Orion" class="w-full h-full" data-sd-id="27">
+              </div>
+              <div class="flex-1 flex flex-col gap-1" data-sd-id="28">
+                <div class="flex justify-between items-start" data-sd-id="29">
+                  <h3 class="text-[var(--parchment)] text-lg leading-none" data-sd-id="30">Orion</h3>
+                  <div class="wax-seal-dot bg-blue-500" data-sd-id="31"></div>
+                </div>
+                <span class="text-[var(--candle-gold)] text-[10px] uppercase tracking-wider" data-sd-id="32">The Alchemist</span>
+                <span class="bg-[#3a2318] text-[#f1e2c0] opacity-60 text-[9px] px-2 py-0.5 inline-block w-fit mt-1 border border-[#1a0f0a]" data-sd-id="33">REGULAR</span>
+              </div>
+            </div>
+
+            <!-- Companion Card 3 -->
+            <div class="bg-[#5a3a2a] border-4 border-[#1a0f0a] p-4 relative flex items-start gap-4" data-sd-id="34">
+              <div class="w-20 h-20 border-4 border-[#1a0f0a] bg-[#2a1212] p-1" data-sd-id="35">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nyx&amp;backgroundColor=2e0000" alt="Nyx" class="w-full h-full" data-sd-id="36">
+              </div>
+              <div class="flex-1 flex flex-col gap-1" data-sd-id="37">
+                <div class="flex justify-between items-start" data-sd-id="38">
+                  <h3 class="text-[var(--parchment)] text-lg leading-none" data-sd-id="39">Nyx</h3>
+                  <div class="wax-seal-dot bg-red-800" data-sd-id="40"></div>
+                </div>
+                <span class="text-[var(--candle-gold)] text-[10px] uppercase tracking-wider" data-sd-id="41">Wanderer</span>
+                <span class="bg-[#3a2318] text-[#e8b04a] text-[9px] px-2 py-0.5 inline-block w-fit mt-1 border border-[#1a0f0a]" data-sd-id="42">QUIET</span>
+              </div>
+            </div>
+
+            <!-- Add Companion Button -->
+            <button class="pixel-dash-card p-4 flex flex-col items-center justify-center gap-2 group hover:bg-black/20 transition-all" data-sd-id="43">
+              <iconify-icon icon="pixelarticons:plus" class="text-4xl text-[var(--parchment)] opacity-50 group-hover:scale-110 group-hover:opacity-100"></iconify-icon>
+              <span class="text-[var(--parchment)] opacity-50 text-xs group-hover:opacity-100 uppercase tracking-widest" data-sd-id="44">Add Companion</span>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Right Side: Edit Form -->
+        <div class="w-1/2 parchment-texture p-8 overflow-y-auto custom-scrollbar text-[var(--ink)]" data-sd-id="45">
+          <div class="flex items-start gap-6 mb-8" data-sd-id="46">
+            <div class="w-32 h-32 bg-black/5 border-4 border-[#1a0f0a] border-dashed flex flex-col items-center justify-center text-center p-2 hover:bg-black/10 transition-colors cursor-pointer" data-sd-id="47">
+              <iconify-icon icon="pixelarticons:camera" class="text-3xl opacity-30"></iconify-icon>
+              <span class="text-[9px] uppercase mt-2 opacity-50" data-sd-id="48">Upload Portrait</span>
+            </div>
+            <div class="flex-1 space-y-4" data-sd-id="49">
+              <div data-sd-id="50">
+                <label class="text-[10px] uppercase font-bold tracking-widest block mb-1 opacity-70" data-sd-id="51">Companion Name</label>
+                <input type="text" placeholder="Elara Moonwhisper" class="stardew-input w-full" data-sd-id="52">
+              </div>
+              <div data-sd-id="53">
+                <label class="text-[10px] uppercase font-bold tracking-widest block mb-1 opacity-70" data-sd-id="54">Role</label>
+                <input type="text" placeholder="e.g. Spirit Guide" class="stardew-input w-full" data-sd-id="55">
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-6" data-sd-id="56">
+            <div data-sd-id="57">
+              <label class="text-[10px] uppercase font-bold tracking-widest block mb-1 opacity-70" data-sd-id="58">Voice &amp; Personality</label>
+              <textarea placeholder="A calming but mysterious tone. Speaks in metaphors..." class="stardew-input w-full h-24 resize-none" data-sd-id="59"></textarea>
+            </div>
+
+            <div data-sd-id="60">
+              <label class="text-[10px] uppercase font-bold tracking-widest block mb-2 opacity-70" data-sd-id="61">How often do they write?</label>
+              <div class="grid grid-cols-4 gap-2" data-sd-id="62">
+                <button class="stardew-button py-2 text-[10px] bg-[var(--teal)]" data-sd-id="63">Chatty</button>
+                <button class="stardew-button py-2 text-[10px]" data-sd-id="64">Regular</button>
+                <button class="stardew-button py-2 text-[10px]" data-sd-id="65">Quiet</button>
+                <button class="stardew-button py-2 text-[10px]" data-sd-id="66">Rare</button>
+              </div>
+            </div>
+
+            <div class="flex gap-8" data-sd-id="67">
+              <div class="flex-1" data-sd-id="68">
+                <label class="text-[10px] uppercase font-bold tracking-widest block mb-2 opacity-70" data-sd-id="69">Correspondence Type</label>
+                <div class="flex gap-3" data-sd-id="70">
+                  <label class="flex items-center gap-2 text-xs" data-sd-id="71">
+                    <input type="radio" name="pref" class="pixel-checkbox" checked="" data-sd-id="72">
+                    Both
+                  </label>
+                  <label class="flex items-center gap-2 text-xs" data-sd-id="73">
+                    <input type="radio" name="pref" class="pixel-checkbox" data-sd-id="74">
+                    Letters
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-black/5 p-4 border-2 border-[var(--ink)]/10" data-sd-id="75">
+              <label class="flex items-center gap-3 text-sm mb-3" data-sd-id="76">
+                <input type="checkbox" class="pixel-checkbox" id="lang-toggle" data-sd-id="77">
+                Knows another language
+              </label>
+              <div class="grid grid-cols-2 gap-4" data-sd-id="78">
+                <div data-sd-id="79">
+                  <label class="text-[9px] uppercase block mb-1 opacity-60" data-sd-id="80">Language Name</label>
+                  <input type="text" placeholder="e.g. Latin" class="stardew-input w-full text-sm py-1" data-sd-id="81">
+                </div>
+                <div data-sd-id="82">
+                  <label class="text-[9px] uppercase block mb-1 opacity-60" data-sd-id="83">Frequency</label>
+                  <select class="stardew-input w-full text-xs py-1 h-9" data-sd-id="84">
+                    <option data-sd-id="85">Mixes phrases</option>
+                    <option data-sd-id="86">Word now and then</option>
+                    <option data-sd-id="87">Entirely</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div data-sd-id="88">
+              <label class="text-[10px] uppercase font-bold tracking-widest block mb-3 opacity-70" data-sd-id="89">Wax Seal Styling</label>
+              <div class="flex items-center gap-6" data-sd-id="90">
+                <div class="flex gap-2" data-sd-id="91">
+                  <div class="w-6 h-6 bg-purple-600 border-2 border-black ring-2 ring-[var(--ink)]/10 cursor-pointer" data-sd-id="92"></div>
+                  <div class="w-6 h-6 bg-red-700 border-2 border-black opacity-30 cursor-pointer" data-sd-id="93"></div>
+                  <div class="w-6 h-6 bg-blue-500 border-2 border-black opacity-30 cursor-pointer" data-sd-id="94"></div>
+                  <div class="w-6 h-6 bg-emerald-700 border-2 border-black opacity-30 cursor-pointer" data-sd-id="95"></div>
+                </div>
+                <div class="h-8 w-[2px] bg-[var(--ink)]/10" data-sd-id="96"></div>
+                <div class="flex gap-3" data-sd-id="97">
+                   <iconify-icon icon="pixelarticons:moon-star" class="text-2xl cursor-pointer hover:text-[var(--teal)]"></iconify-icon>
+                   <iconify-icon icon="pixelarticons:star" class="text-2xl cursor-pointer opacity-30"></iconify-icon>
+                   <iconify-icon icon="pixelarticons:sun" class="text-2xl cursor-pointer opacity-30"></iconify-icon>
+                   <iconify-icon icon="pixelarticons:eye-closed" class="text-2xl cursor-pointer opacity-30"></iconify-icon>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 flex gap-4" data-sd-id="98">
+              <button id="btn-save" class="flex-1 stardew-button py-4 text-lg flex items-center justify-center gap-3 bg-[var(--teal)]" data-sd-id="99">
+                <iconify-icon icon="pixelarticons:check" class="text-2xl"></iconify-icon>
+                Save Entry
+              </button>
+              <button id="btn-archive" class="stardew-button px-6 py-4 opacity-70" data-sd-id="100">
+                <iconify-icon icon="pixelarticons:archive" class="text-2xl"></iconify-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ambient Particles -->
+    <div class="absolute inset-0 pointer-events-none z-20 overflow-hidden" data-sd-id="101">
+      <div class="absolute top-1/4 left-1/4 w-1 h-1 bg-white/40 animate-pulse" data-sd-id="102"></div>
+      <div class="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-yellow-200/20 animate-bounce" data-sd-id="103"></div>
+      <div class="absolute bottom-1/4 left-2/3 w-1 h-1 bg-purple-300/30 animate-pulse" style="animation-delay: 2s" data-sd-id="104"></div>
+    </div>
+  </div>
+
+</body></html>

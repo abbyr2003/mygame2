@@ -1,0 +1,260 @@
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1440, height=900">
+  <title>Spirit Keep - Home</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --deep-purple: #2a1846;
+      --midnight-blue: #141a3a;
+      --candle-gold: #e8b04a;
+      --teal: #3fb8a8;
+      --parchment: #f1e2c0;
+      --ink: #2b1d14;
+      --wood-dark: #3b2316;
+      --wood-light: #6d4c35;
+      --wood-highlight: #9d765e;
+      --wax-red: #b92b27;
+    }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Pixelify Sans', cursive;
+      background-color: #140c24;
+      image-rendering: pixelated;
+    }
+
+    .pixel-panel {
+      background-color: var(--wood-light);
+      border: 4px solid var(--wood-dark);
+      box-shadow: 
+        inset -4px -4px 0px 0px var(--wood-dark),
+        inset 4px 4px 0px 0px var(--wood-highlight);
+      position: relative;
+    }
+
+    .hotspot {
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.1s steps(2);
+    }
+
+    .hotspot:active {
+      transform: scale(0.95);
+    }
+
+    .label-plate {
+      position: absolute;
+      top: -44px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--wood-dark);
+      border: 2px solid var(--candle-gold);
+      color: var(--parchment);
+      padding: 4px 10px;
+      white-space: nowrap;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.1s steps(2);
+      pointer-events: none;
+      box-shadow: 4px 4px 0px var(--ink);
+      image-rendering: pixelated;
+    }
+
+    .hotspot:hover .label-plate {
+      opacity: 1;
+    }
+
+    .pixel-glow {
+      position: absolute;
+      inset: -4px;
+      border: 4px solid var(--candle-gold);
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 0 0 4px var(--ink);
+    }
+
+    .hotspot:hover .pixel-glow {
+      opacity: 1;
+    }
+
+    .wax-seal-badge {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      width: 32px;
+      height: 32px;
+      background-color: var(--wax-red);
+      border: 2px solid #801d1a;
+      box-shadow: 
+        inset -2px -2px 0px #601412,
+        2px 2px 0px var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      z-index: 20;
+    }
+
+    .pixel-envelope {
+      width: 28px;
+      height: 18px;
+      background: var(--parchment);
+      border: 2px solid var(--ink);
+      position: absolute;
+      box-shadow: 2px 2px 0px var(--ink);
+    }
+
+    .pixel-seal {
+      width: 8px;
+      height: 8px;
+      background: var(--wax-red);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .pixel-sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: white;
+      animation: sparkle 1.5s infinite steps(4);
+    }
+
+    @keyframes sparkle {
+      0%, 100% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.5); opacity: 1; }
+    }
+
+    .scrying-shimmer-pixel {
+      animation: pulse-teal 2s infinite steps(2);
+    }
+
+    @keyframes pulse-teal {
+      0% { border-color: var(--teal); }
+      50% { border-color: #fff; }
+      100% { border-color: var(--teal); }
+    }
+
+    .pulse-violet-pixel {
+      animation: pulse-v 3s infinite steps(3);
+    }
+
+    @keyframes pulse-v {
+      0% { box-shadow: 0 0 0 0px #9d50bb; }
+      50% { box-shadow: 0 0 0 8px #9d50bb33; }
+      100% { box-shadow: 0 0 0 0px #9d50bb; }
+    }
+
+    .stardew-cursor {
+      cursor: url('https://api.iconify.design/lucide:mouse-pointer-2.svg?color=%23e8b04a'), auto;
+    }
+  </style>
+</head>
+<body class="stardew-cursor">
+  <div class="w-[1440px] h-[900px] relative overflow-hidden flex items-center justify-center bg-[#140c24]" id="main-container">
+    
+    <!-- Background Layer -->
+    <img src="https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/9a7eefce-d127-49e8-a2bb-2a29b84eb1a5/brand-assets/cottage-home/cottage-home-screen.png" alt="Cottage Interior" class="w-full h-full object-contain z-0">
+
+    <!-- Interactive Overlay Container -->
+    <div class="absolute w-full h-full z-10">
+      
+      <!-- The Writing Desk -->
+      <a href="#" id="writing-desk-link" class="hotspot group" style="top: 540px; left: 740px; width: 110px; height: 160px;">
+        <div class="pixel-glow"></div>
+        <div class="label-plate flex items-center gap-2">
+          <iconify-icon icon="pixelarticons:mail"></iconify-icon>
+          Writing Desk
+        </div>
+        <div class="wax-seal-badge">2</div>
+        
+        <!-- Envelopes visual indicator -->
+        <div class="absolute top-12 left-4 rotate-12 pixel-envelope">
+          <div class="pixel-seal"></div>
+        </div>
+        <div class="absolute top-16 left-10 -rotate-6 pixel-envelope">
+          <div class="pixel-seal"></div>
+        </div>
+      </a>
+
+      <!-- The Scrying Mirror -->
+      <a href="#" id="scrying-mirror-link" class="hotspot group" style="top: 275px; left: 240px; width: 65px; height: 85px;">
+        <div class="pixel-glow scrying-shimmer-pixel"></div>
+        <div class="label-plate flex items-center gap-2">
+          <iconify-icon icon="pixelarticons:eye-closed"></iconify-icon>
+          Scrying Mirror
+        </div>
+        <div class="wax-seal-badge">3</div>
+        <!-- Sparkles around mirror -->
+        <div class="pixel-sparkle" style="top: 10%; left: 10%"></div>
+        <div class="pixel-sparkle" style="top: 80%; left: 70%; animation-delay: 0.5s"></div>
+      </a>
+
+      <!-- The Crystal Ball -->
+      <a href="#" id="crystal-ball-link" class="hotspot group" style="top: 405px; left: 805px; width: 45px; height: 45px;">
+        <div class="pixel-glow pulse-violet-pixel border-purple-500"></div>
+        <div class="label-plate flex items-center gap-2">
+          <iconify-icon icon="pixelarticons:moon"></iconify-icon>
+          Crystal Ball
+        </div>
+      </a>
+
+      <!-- The Akashic Shelf -->
+      <a href="#" id="akashic-shelf-link" class="hotspot group" style="top: 250px; left: 130px; width: 100px; height: 180px;">
+        <div class="pixel-glow"></div>
+        <div class="label-plate flex items-center gap-2">
+          <iconify-icon icon="pixelarticons:book"></iconify-icon>
+          Akashic Shelf
+        </div>
+        <!-- Glowing Book highlight (Pixel block style) -->
+        <div class="absolute bottom-10 left-4 w-6 h-8 bg-teal-400 border-2 border-white opacity-40 animate-pulse"></div>
+      </a>
+
+      <!-- The Keeper (Cat) -->
+      <a href="#" id="keeper-link" class="hotspot group" style="top: 610px; left: 115px; width: 100px; height: 60px;">
+        <div class="pixel-glow border-orange-400"></div>
+        <div class="label-plate flex items-center gap-2">
+          <iconify-icon icon="pixelarticons:heart"></iconify-icon>
+          The Keeper
+        </div>
+      </a>
+
+      <!-- The Hearth (Fireplace) -->
+      <a href="#" id="hearth-link" class="hotspot group" style="top: 480px; left: 20px; width: 100px; height: 180px;">
+        <div class="pixel-glow border-red-500"></div>
+        <div class="label-plate flex items-center gap-2">
+          <iconify-icon icon="pixelarticons:sun"></iconify-icon>
+          The Hearth
+        </div>
+      </a>
+
+    </div>
+
+    <!-- Dithered/Noise Grain Overlay (Pixel style) -->
+    <div class="pointer-events-none absolute inset-0 opacity-[0.05] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] z-20 mix-blend-overlay"></div>
+
+    <!-- Bottom Menu Bar (Stardew Style) -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-4">
+      <a href="#" id="inventory-btn" class="pixel-panel px-6 py-2 text-white hover:translate-y-1 transition-transform">
+        <span class="flex items-center gap-2 text-lg">
+           <iconify-icon icon="pixelarticons:briefcase"></iconify-icon>
+           Inventory
+        </span>
+      </a>
+      <a href="#" id="settings-btn" class="pixel-panel px-6 py-2 text-white hover:translate-y-1 transition-transform">
+        <span class="flex items-center gap-2 text-lg">
+           <iconify-icon icon="pixelarticons:cog"></iconify-icon>
+           Settings
+        </span>
+      </a>
+    </div>
+
+  </div>
+</body></html>

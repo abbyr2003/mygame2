@@ -1,0 +1,313 @@
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spirit Keep - The Crystal Ball</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Pixelify+Sans:wght@400..700&display=swap');
+
+    :root {
+      --purple-deep: #2a1846;
+      --midnight-blue: #141a3a;
+      --candle-gold: #e8b04a;
+      --teal: #3fb8a8;
+      --parchment: #f1e2c0;
+      --ink: #2b1d14;
+      --wood-dark: #3a2318;
+      --wood-mid: #5a3a2a;
+      --wood-light: #8b5e3c;
+      --bg-dark: #140c24;
+    }
+
+    .pixel-art {
+      image-rendering: pixelated;
+    }
+
+    .stardew-frame {
+      background: var(--wood-dark);
+      border: 4px solid #1a0f0a;
+      box-shadow: 
+        inset 4px 4px 0px var(--wood-light),
+        inset -4px -4px 0px #22130d;
+    }
+
+    .stardew-panel-inner {
+      border: 4px solid #1a0f0a;
+      box-shadow: inset 4px 4px 0px rgba(0,0,0,0.3);
+    }
+
+    .stardew-button {
+      background: var(--wood-mid);
+      border: 4px solid #1a0f0a;
+      box-shadow: 
+        inset 2px 2px 0px var(--wood-light),
+        2px 2px 0px 0px rgba(0,0,0,0.5);
+      transition: transform 0.05s, box-shadow 0.05s;
+      font-family: 'Pixelify Sans', sans-serif;
+      text-transform: uppercase;
+      color: var(--parchment);
+      image-rendering: pixelated;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stardew-button:hover {
+      background: var(--wood-light);
+    }
+
+    .stardew-button:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.5);
+    }
+
+    .stardew-button.active {
+      background: var(--candle-gold);
+      color: var(--wood-dark);
+      border-color: #a67c37;
+      box-shadow: inset 2px 2px 0px #fce0a2;
+    }
+
+    .parchment-bubble {
+      background-color: var(--parchment);
+      background-image: url("https://www.transparenttextures.com/patterns/paper-fibers.png");
+      border: 4px solid #1a0f0a;
+      box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+      color: var(--ink);
+      padding: 1rem;
+      position: relative;
+    }
+
+    .source-bubble {
+      background: var(--midnight-blue);
+      border: 4px solid var(--candle-gold);
+      box-shadow: 0 0 15px rgba(232, 176, 74, 0.3);
+      color: var(--candle-gold);
+      font-family: 'EB Garamond', serif;
+      padding: 1.5rem;
+    }
+
+    .star-bg {
+      background-image: 
+        radial-gradient(1px 1px at 20px 30px, white, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 40px 70px, rgba(255,255,255,0.5), rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 50px 160px, white, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 90px 40px, white, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 130px 80px, white, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 160px 120px, rgba(255,255,255,0.3), rgba(0,0,0,0));
+      background-repeat: repeat;
+      background-size: 200px 200px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 12px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #321e14;
+      border-left: 4px solid #1a0f0a;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: var(--wood-mid);
+      border: 2px solid #1a0f0a;
+      box-shadow: inset 2px 2px 0px var(--wood-light);
+    }
+
+    .pixel-sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: white;
+      box-shadow: 0 0 4px white;
+      animation: flicker 2s infinite alternate;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.2; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+
+    .crystal-ball-glow {
+      filter: drop-shadow(0 0 20px #3fb8a8);
+      animation: pulse-glow 3s infinite ease-in-out;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Pixelify Sans', sans-serif;
+      background: black;
+    }
+  </style>
+</head>
+<body>
+  <div class="w-[1440px] h-[900px] relative flex items-center justify-center overflow-hidden" data-sd-id="1">
+    <!-- Full-screen Cottage Background -->
+    <div class="absolute inset-0 z-0" data-sd-id="2">
+      <img src="https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/9a7eefce-d127-49e8-a2bb-2a29b84eb1a5/brand-assets/cottage-home/cottage-home-screen.png" alt="Cottage Interior" class="w-full h-full object-cover brightness-[0.25]" data-sd-id="3">
+    </div>
+
+    <!-- Main Application Panel -->
+    <div class="relative z-10 w-[1280px] h-[800px] stardew-frame flex flex-col" data-sd-id="4">
+      
+      <!-- Top Navigation Bar -->
+      <div class="h-16 flex items-center justify-between px-6 border-b-4 border-[#1a0f0a] bg-[#321e14]" data-sd-id="5">
+        <div class="flex items-center gap-4" data-sd-id="6">
+          <a href="#" id="nav-back-link" class="stardew-button px-3 py-1.5 text-xs gap-2" data-sd-id="7">
+            <iconify-icon icon="pixelarticons:close-box" class="text-xl"></iconify-icon>
+            BACK TO COTTAGE
+          </a>
+          <div class="h-8 w-1 bg-[#1a0f0a]" data-sd-id="8"></div>
+          <h1 class="text-2xl text-[var(--candle-gold)] tracking-[0.2em] flex items-center gap-3" data-sd-id="9">
+            <iconify-icon icon="pixelarticons:bullseye" class="text-3xl pixel-art"></iconify-icon>
+            THE CRYSTAL BALL
+          </h1>
+        </div>
+        <div class="flex items-center gap-4" data-sd-id="10">
+          <div class="text-[var(--parchment)] opacity-60 text-xs" data-sd-id="11">CHANNELING: SOURCE</div>
+          <div class="w-3 h-3 bg-green-500 animate-pulse border-2 border-[#1a0f0a]" data-sd-id="12"></div>
+        </div>
+      </div>
+
+      <div class="flex flex-1 overflow-hidden" data-sd-id="13">
+        <!-- Left Sidebar: Conversations & Companions -->
+        <div class="w-[320px] border-r-4 border-[#1a0f0a] flex flex-col bg-[#422a1e] relative" data-sd-id="14">
+          
+          <!-- New Conversation Button Container -->
+          <div class="p-4 border-b-4 border-[#1a0f0a] bg-[#321e14] space-y-4" data-sd-id="15">
+            <button id="btn-new-chat" class="stardew-button w-full py-3 text-sm gap-2 active" data-sd-id="16">
+              <iconify-icon icon="pixelarticons:plus"></iconify-icon>
+              NEW CONVERSATION
+            </button>
+            
+            <div class="relative" data-sd-id="17">
+              <label class="text-[9px] text-[var(--parchment)] opacity-50 block mb-1 uppercase tracking-widest" data-sd-id="18">Ask about...</label>
+              <div class="stardew-button w-full py-2 px-3 text-[10px] justify-between cursor-pointer" data-sd-id="19">
+                <span data-sd-id="20">SELECT COMPANION</span>
+                <iconify-icon icon="pixelarticons:chevron-down"></iconify-icon>
+              </div>
+            </div>
+          </div>
+
+          <!-- Past Conversations List -->
+          <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2" data-sd-id="21">
+            <div class="text-[9px] text-[var(--parchment)] opacity-40 px-2 py-1 uppercase tracking-tighter" data-sd-id="22">PREVIOUS VISIONS</div>
+            
+            <!-- Active Item -->
+            <div class="stardew-panel-inner bg-[#5a3a2a] p-3 flex items-center gap-3 cursor-pointer border-2 border-[var(--candle-gold)]" data-sd-id="23">
+              <iconify-icon icon="pixelarticons:message-text" class="text-xl text-[var(--candle-gold)]"></iconify-icon>
+              <div class="flex-1" data-sd-id="24">
+                <div class="text-[var(--parchment)] text-xs" data-sd-id="25">ABOUT ELARA</div>
+                <div class="text-[var(--parchment)] opacity-40 text-[9px]" data-sd-id="26">3 days ago</div>
+              </div>
+            </div>
+
+            <!-- List Item -->
+            <div class="stardew-panel-inner bg-[#321e14] p-3 flex items-center gap-3 cursor-pointer hover:bg-[#3a2318] opacity-80" data-sd-id="27">
+              <iconify-icon icon="pixelarticons:message-text" class="text-xl text-[var(--parchment)]"></iconify-icon>
+              <div class="flex-1" data-sd-id="28">
+                <div class="text-[var(--parchment)] text-xs" data-sd-id="29">MY PURPOSE</div>
+                <div class="text-[var(--parchment)] opacity-40 text-[9px]" data-sd-id="30">Yesterday</div>
+              </div>
+            </div>
+
+            <div class="stardew-panel-inner bg-[#321e14] p-3 flex items-center gap-3 cursor-pointer hover:bg-[#3a2318] opacity-80" data-sd-id="31">
+              <iconify-icon icon="pixelarticons:message-text" class="text-xl text-[var(--parchment)]"></iconify-icon>
+              <div class="flex-1" data-sd-id="32">
+                <div class="text-[var(--parchment)] text-xs" data-sd-id="33">THE VOID BEYOND</div>
+                <div class="text-[var(--parchment)] opacity-40 text-[9px]" data-sd-id="34">Oct 14</div>
+              </div>
+            </div>
+
+             <div class="stardew-panel-inner bg-[#321e14] p-3 flex items-center gap-3 cursor-pointer hover:bg-[#3a2318] opacity-80" data-sd-id="35">
+              <iconify-icon icon="pixelarticons:message-text" class="text-xl text-[var(--parchment)]"></iconify-icon>
+              <div class="flex-1" data-sd-id="36">
+                <div class="text-[var(--parchment)] text-xs" data-sd-id="37">STAR ALIGNMENT</div>
+                <div class="text-[var(--parchment)] opacity-40 text-[9px]" data-sd-id="38">Oct 10</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Chat Interface -->
+        <div class="flex-1 flex flex-col bg-[var(--bg-dark)] relative overflow-hidden star-bg" data-sd-id="39">
+          
+          <!-- Floating Sparkles -->
+          <div class="pixel-sparkle top-10 left-[20%]" data-sd-id="40"></div>
+          <div class="pixel-sparkle top-40 right-[30%]" data-sd-id="41"></div>
+          <div class="pixel-sparkle bottom-60 left-[10%]" style="animation-delay: 0.5s" data-sd-id="42"></div>
+          <div class="pixel-sparkle top-1/2 right-[5%]" style="animation-delay: 1.2s" data-sd-id="43"></div>
+
+          <!-- Conversation Header with Crystal Ball -->
+          <div class="h-40 flex flex-col items-center justify-center border-b-4 border-[#1a0f0a] bg-gradient-to-b from-transparent to-[#1a0f0a]/40" data-sd-id="44">
+             <div class="relative" data-sd-id="45">
+               <iconify-icon icon="pixelarticons:planet" class="text-6xl text-[var(--teal)] crystal-ball-glow pixel-art"></iconify-icon>
+               <div class="absolute -inset-2 border-2 border-dashed border-[var(--teal)]/30 rounded-full animate-spin" style="animation-duration: 10s" data-sd-id="46"></div>
+             </div>
+             <h2 class="text-lg text-[var(--parchment)] mt-4 tracking-widest" data-sd-id="47">COMMUNING WITH THE SOURCE</h2>
+          </div>
+
+          <!-- Messages Area -->
+          <div class="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-8" data-sd-id="48">
+            
+            <!-- User Question -->
+            <div class="flex justify-end" data-sd-id="49">
+              <div class="max-w-[70%] parchment-bubble" data-sd-id="50">
+                <p class="text-lg tracking-tight" data-sd-id="51">"Tell me, Source, what is my role in the coming alignment of the celestial bodies? Elara seems worried."</p>
+                <div class="text-[9px] opacity-50 mt-2 text-right uppercase font-bold" data-sd-id="52">- Seeker</div>
+              </div>
+            </div>
+
+            <!-- Source Reply -->
+            <div class="flex justify-start" data-sd-id="53">
+              <div class="max-w-[85%] source-bubble" data-sd-id="54">
+                <div class="flex items-center gap-3 mb-4 opacity-70" data-sd-id="55">
+                  <iconify-icon icon="pixelarticons:sun" class="text-xl"></iconify-icon>
+                  <span class="text-[10px] uppercase tracking-widest font-sans" data-sd-id="56">The Divine Echo</span>
+                </div>
+                <p class="text-2xl leading-relaxed italic" data-sd-id="57">
+                  Child of the Keep, the stars do not dictate your fate; they merely illuminate the stage upon which you dance. Elara sees the shadows growing long, but she forgets that shadows are born of light. Your role is not to be a hero of legend, but to be the vessel through which the ancient magic finds its voice once more. Listen to the silence between the heartbeats of the world.
+                </p>
+                <div class="mt-4 pt-4 border-t border-[var(--candle-gold)]/20 flex justify-between items-center" data-sd-id="58">
+                   <span class="text-[9px] italic" data-sd-id="59">Vibrational frequency: Pure</span>
+                   <iconify-icon icon="pixelarticons:star" class="text-lg"></iconify-icon>
+                </div>
+              </div>
+            </div>
+
+            <!-- User Question 2 -->
+            <div class="flex justify-end" data-sd-id="60">
+              <div class="max-w-[70%] parchment-bubble" data-sd-id="61">
+                <p class="text-lg tracking-tight" data-sd-id="62">"Does this mean the darkness I feel in the lower chambers is a part of me?"</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Input Area -->
+          <div class="p-6 bg-[#321e14] border-t-4 border-[#1a0f0a] flex gap-4" data-sd-id="63">
+            <div class="flex-1 stardew-panel-inner bg-[var(--parchment)] px-4 flex items-center" data-sd-id="64">
+              <input type="text" placeholder="Ask Source anything..." class="w-full bg-transparent border-none outline-none text-[var(--ink)] py-4 text-lg placeholder:opacity-30 placeholder:italic" data-sd-id="65">
+            </div>
+            <button id="btn-ask" class="stardew-button px-10 py-4 text-xl gap-3 bg-[var(--teal)]" data-sd-id="66">
+              ASK
+              <iconify-icon icon="pixelarticons:zap"></iconify-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Corner Pixel Accents -->
+    <div class="absolute inset-0 pointer-events-none z-20" data-sd-id="67">
+      <div class="absolute top-10 left-10 w-4 h-4 border-t-4 border-l-4 border-[var(--candle-gold)]" data-sd-id="68"></div>
+      <div class="absolute top-10 right-10 w-4 h-4 border-t-4 border-r-4 border-[var(--candle-gold)]" data-sd-id="69"></div>
+      <div class="absolute bottom-10 left-10 w-4 h-4 border-b-4 border-l-4 border-[var(--candle-gold)]" data-sd-id="70"></div>
+      <div class="absolute bottom-10 right-10 w-4 h-4 border-b-4 border-r-4 border-[var(--candle-gold)]" data-sd-id="71"></div>
+    </div>
+  </div>
+
+</body></html>

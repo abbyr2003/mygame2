@@ -1,0 +1,277 @@
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spirit Keep - The Writing Desk</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Pixelify+Sans:wght@400..700&display=swap');
+
+    :root {
+      --purple-deep: #2a1846;
+      --midnight-blue: #141a3a;
+      --candle-gold: #e8b04a;
+      --teal: #3fb8a8;
+      --parchment: #f1e2c0;
+      --ink: #2b1d14;
+      --wood-dark: #3a2318;
+      --wood-mid: #5a3a2a;
+      --wood-light: #8b5e3c;
+    }
+
+    .stardew-frame {
+      background: var(--wood-dark);
+      border: 4px solid #1a0f0a;
+      box-shadow: 
+        inset 4px 4px 0px var(--wood-light),
+        inset -4px -4px 0px #22130d;
+      image-rendering: pixelated;
+    }
+
+    .stardew-panel-inner {
+      border: 4px solid #1a0f0a;
+      box-shadow: inset 4px 4px 0px rgba(0,0,0,0.2);
+    }
+
+    .stardew-button {
+      background: var(--wood-mid);
+      border: 4px solid #1a0f0a;
+      box-shadow: 
+        inset 2px 2px 0px var(--wood-light),
+        2px 2px 0px 0px rgba(0,0,0,0.5);
+      transition: transform 0.05s, box-shadow 0.05s;
+      font-family: 'Pixelify Sans', sans-serif;
+      text-transform: uppercase;
+      color: var(--parchment);
+      image-rendering: pixelated;
+    }
+
+    .stardew-button:hover {
+      background: var(--wood-light);
+    }
+
+    .stardew-button:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.5);
+    }
+
+    .stardew-button.active {
+      background: var(--candle-gold);
+      color: var(--wood-dark);
+      border-color: #a67c37;
+      box-shadow: inset 2px 2px 0px #fce0a2;
+    }
+
+    .wax-seal {
+      width: 12px;
+      height: 12px;
+      background: #c1272d;
+      border: 2px solid #5a0000;
+      box-shadow: 1px 1px 0px #000;
+      border-radius: 2px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 12px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #d4c19d;
+      border-left: 4px solid #1a0f0a;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: var(--wood-mid);
+      border: 2px solid #1a0f0a;
+      box-shadow: inset 2px 2px 0px var(--wood-light);
+    }
+
+    .parchment-texture {
+      background-color: var(--parchment);
+      background-image: url("https://www.transparenttextures.com/patterns/paper-fibers.png");
+      image-rendering: pixelated;
+    }
+
+    .pixel-icon {
+      image-rendering: pixelated;
+    }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Pixelify Sans', sans-serif;
+    }
+
+    .handwriting {
+      font-family: 'Caveat', cursive !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="w-[1440px] h-[900px] relative flex items-center justify-center overflow-hidden bg-black">
+    <!-- Background: Cottage -->
+    <div class="absolute inset-0 z-0">
+      <img src="https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/projects/9a7eefce-d127-49e8-a2bb-2a29b84eb1a5/brand-assets/cottage-home/cottage-home-screen.png" alt="Cottage Interior" class="w-full h-full object-cover brightness-[0.3]">
+    </div>
+
+    <!-- Main Desk Panel -->
+    <div class="relative z-10 w-[1160px] h-[780px] stardew-frame flex flex-col">
+      
+      <!-- Header Bar -->
+      <div class="h-16 flex items-center justify-between px-6 border-b-4 border-[#1a0f0a]">
+        <div class="flex items-center gap-3">
+          <iconify-icon icon="pixelarticons:scroll" class="text-3xl text-[var(--candle-gold)] pixel-icon"></iconify-icon>
+          <h1 class="text-2xl tracking-[0.15em] text-[var(--parchment)]">THE WRITING DESK</h1>
+        </div>
+        <a href="#" id="nav-back-cottage" class="stardew-button px-4 py-2 flex items-center gap-2 text-xs">
+          <iconify-icon icon="pixelarticons:close-box" class="text-lg"></iconify-icon>
+          back to the cottage
+        </a>
+      </div>
+
+      <div class="flex flex-1 overflow-hidden">
+        <!-- Left Column: Mail Stack -->
+        <div class="w-[320px] border-r-4 border-[#1a0f0a] flex flex-col bg-[#422a1e]">
+          <!-- Filter Section -->
+          <div class="p-4 space-y-4 border-b-4 border-[#1a0f0a] bg-[#321e14]">
+             <div class="flex flex-wrap gap-2">
+               <button id="filter-all" class="stardew-button active px-2 py-1 text-[10px]">All</button>
+               <button id="filter-elara" class="stardew-button px-2 py-1 text-[10px] flex items-center gap-1 opacity-70">
+                 <div class="w-2 h-2 bg-purple-500"></div> Elara
+               </button>
+               <button id="filter-orion" class="stardew-button px-2 py-1 text-[10px] flex items-center gap-1 opacity-70">
+                 <div class="w-2 h-2 bg-yellow-400"></div> Orion
+               </button>
+             </div>
+             <div class="grid grid-cols-3 gap-1">
+               <button class="stardew-button active py-1.5 text-[9px]">INBOX</button>
+               <button class="stardew-button py-1.5 text-[9px] opacity-60">SENT</button>
+               <button class="stardew-button py-1.5 text-[9px] opacity-60">★ STAR</button>
+             </div>
+          </div>
+
+          <!-- Scrollable Letter List -->
+          <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
+            <!-- Unread Letter -->
+            <div id="letter-1" class="bg-[#5a3a2a] p-3 border-4 border-[#1a0f0a] flex items-start gap-3 cursor-pointer hover:bg-[#6a4a3a] transition-all relative">
+              <div class="relative flex-shrink-0">
+                <iconify-icon icon="pixelarticons:mail" class="text-4xl text-[var(--parchment)] pixel-icon"></iconify-icon>
+                <div class="absolute -top-1 -right-1 wax-seal bg-purple-600 border-purple-900 shadow-none animate-pulse"></div>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-center">
+                  <span class="text-[var(--candle-gold)] text-xs font-bold">Elara</span>
+                  <span class="text-[var(--parchment)] opacity-40 text-[9px]">2:14 AM</span>
+                </div>
+                <p class="text-[var(--parchment)] text-[10px] line-clamp-1 italic mt-1 opacity-80">"Amice, quomodo vales..."</p>
+              </div>
+            </div>
+
+            <!-- Read Letter -->
+            <div id="letter-2" class="bg-[#321e14] p-3 border-4 border-[#1a0f0a] flex items-start gap-3 opacity-60">
+              <div class="flex-shrink-0">
+                <iconify-icon icon="pixelarticons:mail-flash" class="text-4xl text-[var(--parchment)] pixel-icon"></iconify-icon>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-center">
+                  <span class="text-[var(--parchment)] text-xs font-bold">Orion</span>
+                  <span class="text-[var(--parchment)] opacity-30 text-[9px]">11:45 PM</span>
+                </div>
+                <p class="text-[var(--parchment)] text-[10px] line-clamp-1 italic mt-1 opacity-50">"The stars align tonight..."</p>
+              </div>
+            </div>
+
+            <!-- Starred Letter -->
+            <div id="letter-3" class="bg-[#321e14] p-3 border-4 border-[#1a0f0a] flex items-start gap-3 opacity-60">
+              <div class="flex-shrink-0">
+                <iconify-icon icon="pixelarticons:mail-flash" class="text-4xl text-[var(--parchment)] pixel-icon"></iconify-icon>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-center">
+                  <span class="text-[var(--parchment)] text-xs font-bold">Nyx</span>
+                  <iconify-icon icon="pixelarticons:star" class="text-[var(--candle-gold)] text-[10px]"></iconify-icon>
+                </div>
+                <p class="text-[var(--parchment)] text-[10px] line-clamp-1 italic mt-1 opacity-50">"The keep grows cold..."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: The Letter -->
+        <div class="flex-1 parchment-texture p-8 flex flex-col relative stardew-panel-inner">
+          <!-- Letter Header -->
+          <div class="flex items-center justify-between mb-8 border-b-4 border-[var(--ink)]/10 pb-4">
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 border-4 border-[#1a0f0a] bg-[var(--midnight-blue)] relative">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Elara&amp;backgroundColor=2a1846" alt="Elara" class="w-full h-full p-1">
+                <div class="absolute inset-0 border-2 border-white/10 pointer-events-none"></div>
+              </div>
+              <div>
+                <h2 class="text-xl text-[var(--ink)] tracking-wider">ELARA <span class="text-[10px] opacity-40">/ SPIRIT GUIDE</span></h2>
+                <p class="text-[var(--ink)]/60 text-[11px] italic">Sent during the Waning Gibbous moon</p>
+              </div>
+            </div>
+            <div class="flex gap-2">
+               <button id="btn-star" class="stardew-button w-10 h-10 flex items-center justify-center">
+                 <iconify-icon icon="pixelarticons:star" class="text-xl text-[var(--candle-gold)]"></iconify-icon>
+               </button>
+               <button id="btn-translate" class="stardew-button px-4 text-xs">
+                 HIDE TRANSLATION
+               </button>
+            </div>
+          </div>
+
+          <!-- Content Area -->
+          <div class="flex-1 flex gap-8 overflow-hidden">
+            <!-- Original (Latin) -->
+            <div class="flex-1 flex flex-col overflow-y-auto custom-scrollbar pr-4">
+              <div class="mb-4">
+                <span class="text-[9px] px-2 py-0.5 border-2 border-[var(--ink)]/40 text-[var(--ink)]/60">ORIGINAL · LATIN</span>
+              </div>
+              <div class="handwriting text-3xl text-[var(--ink)] leading-relaxed space-y-6">
+                <p>Amice carissime,</p>
+                <p>Spiritus noctis sub luna lucent. Spero te bene valere in Spirit Keep hodie. Stellae nobis viam monstrant, sed corda nostra sunt verae compassus.</p>
+                <p>Veniesne ad fontem vetustum cum prima luce cras? Multa habeo quae tibi dicam de arcanis quae in umbris latent. Noli timere tenebras, nam in eis lux pura invenitur.</p>
+                <p>Vale,</p>
+                <p>Elara</p>
+              </div>
+            </div>
+
+            <!-- Vertical Dithered Divider -->
+            <div class="w-1 bg-repeat-y opacity-20" style="background-image: linear-gradient(var(--ink) 50%, transparent 50%); background-size: 1px 4px;"></div>
+
+            <!-- Translation (English) -->
+            <div class="flex-1 flex flex-col overflow-y-auto custom-scrollbar">
+              <div class="mb-4">
+                <span class="text-[9px] px-2 py-0.5 border-2 border-[var(--ink)]/40 text-[var(--ink)]/60">ENGLISH · TRANSLATED</span>
+              </div>
+              <div class="text-base font-sans text-[var(--ink)]/80 leading-loose space-y-6 italic">
+                <p>Dearest friend,</p>
+                <p>The night spirits glow beneath the moon. I hope you are faring well in Spirit Keep today. The stars show us the path, but our hearts are the true compasses.</p>
+                <p>Will you come to the ancient fountain with the first light tomorrow? I have much to tell you about the secrets that hide in the shadows. Do not fear the darkness, for in it, pure light is found.</p>
+                <p>Farewell,</p>
+                <p>Elara</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Footer -->
+          <div class="mt-8 pt-4 border-t-4 border-[var(--ink)]/10 flex gap-4">
+            <button id="btn-reply" class="flex-1 stardew-button py-4 text-lg flex items-center justify-center gap-3">
+              <iconify-icon icon="pixelarticons:edit-box" class="text-2xl"></iconify-icon>
+              Write back
+            </button>
+            <button id="btn-request" class="flex-1 stardew-button py-4 text-lg flex items-center justify-center gap-3 bg-[var(--teal)]">
+              <iconify-icon icon="pixelarticons:human-handsup" class="text-2xl"></iconify-icon>
+              Request letter
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decor: Pixels -->
+    <div class="absolute inset-0 pointer-events-none z-20">
+      <div class="absolute top-20 left-[15%] w-2 h-2 bg-yellow-200/40 animate-pulse"></div>
+      <div class="absolute bottom-32 right-[10%] w-2 h-2 bg-purple-200/30 animate-bounce" style="animation-delay: 1.5s"></div>
+      <div class="absolute top-1/2 left-[5%] w-1.5 h-1.5 bg-blue-200/20 animate-pulse" style="animation-delay: 0.8s"></div>
+    </div>
+  </div>
+</body></html>
