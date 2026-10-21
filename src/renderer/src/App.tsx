@@ -3,6 +3,7 @@ import { Cottage, type Unread } from './cottage/Cottage'
 import { HOTSPOTS, type RoomId } from './cottage/hotspots'
 import { RoomPanel } from './rooms/RoomPanel'
 import { ContactsRoom } from './rooms/contacts/ContactsRoom'
+import { MessagesRoom } from './rooms/messages/MessagesRoom'
 import { VeilNotice } from './components/VeilNotice'
 import { playChime } from './chime'
 
@@ -59,6 +60,8 @@ function App(): React.JSX.Element {
     switch (id) {
       case 'contacts':
         return <ContactsRoom onAskSource={askSource} />
+      case 'messages':
+        return <MessagesRoom />
       default:
         return null
     }
