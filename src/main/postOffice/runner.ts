@@ -182,8 +182,9 @@ export class PostOffice {
       if (!c || c.archived) return undefined
       const now = this.deps.now()
       const pending = await this.store.getPending()
-      // Texts sent before the companion has read the last one share its reply.
-      const unread =
+      // Texts sent before the reply goes out share it. If the companion has
+      // already read the thread, the new text is read straight away.
+      const waiting =
         format === 'text' && kind === 'reply'
           ? pending.find(
               (p) =>
@@ -191,10 +192,12 @@ export class PostOffice {
                 p.format === 'text' &&
                 p.kind === 'reply' &&
                 p.readAt !== undefined &&
-                new Date(p.readAt).getTime() > now.getTime()
+                new Date(p.dueAt).getTime() > now.getTime()
             )
           : undefined
-      if (unread) return unread.readAt
+      if (waiting) {
+        return new Date(Math.max(new Date(waiting.readAt!).getTime(), now.getTime())).toISOString()
+      }
       const reply = scheduleReply(c, kind, format, now, this.deps.rng, extra)
       await this.store.savePending([...pending, reply])
       return reply.readAt

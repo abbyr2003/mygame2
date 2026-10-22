@@ -18,7 +18,8 @@ export function ThreadView({ companion: c, messages, onSend }: Props): React.JSX
   const [sending, setSending] = useState(false)
   const [failed, setFailed] = useState(false)
   const end = useRef<HTMLDivElement>(null)
-  const now = useNow()
+  const lastOut = [...messages].reverse().find((m) => m.direction === 'out')
+  const now = useNow(60_000, lastOut?.readAt)
 
   useEffect(() => {
     end.current?.scrollIntoView?.({ block: 'end' })
@@ -42,7 +43,6 @@ export function ThreadView({ companion: c, messages, onSend }: Props): React.JSX
 
   const language = c.language?.name
   const isRead = (m: Message): boolean => !!m.readAt && new Date(m.readAt) <= now
-  const lastOut = [...messages].reverse().find((m) => m.direction === 'out')
   const newest = messages[messages.length - 1]
   const typing = newest?.direction === 'out' && isRead(newest) && isHere(c, now)
 

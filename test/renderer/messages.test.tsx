@@ -172,4 +172,15 @@ describe('MessagesRoom', () => {
     )
     expect(within(bubbles()).queryByLabelText('Orion is typing')).toBeNull()
   })
+
+  it('Delivered turns into Read right when the companion reads it', async () => {
+    const readAt = new Date(Date.now() + 300).toISOString()
+    threads[1] = { companionId: 'c2', messages: [out({ readAt })] }
+    render(<MessagesRoom />)
+    fireEvent.click(await screen.findByRole('button', { name: /Orion/ }))
+    expect(await within(bubbles()).findByText('Delivered')).toBeTruthy()
+    await waitFor(() => expect(within(bubbles()).getByText(`Read ${formatWhen(readAt)}`)).toBeTruthy(), {
+      timeout: 2000
+    })
+  })
 })

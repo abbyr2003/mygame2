@@ -169,11 +169,25 @@ describe('PostOffice', () => {
     expect(b).toBe(a)
   })
 
-  it('does not batch once the companion has read', async () => {
+  it('batches onto a reply that is read but not yet delivered, read straight away', async () => {
     const { store, po, setNow } = await setup()
     await store.saveCompanion(makeCompanion())
     const a = await po.userSent('c1', 'reply', 'text', { replyToId: 'm1' })
-    setNow(new Date(new Date(a!).getTime() + 1000))
+    const later = new Date(new Date(a!).getTime() + 1000)
+    const [p] = await store.getPending()
+    expect(later.getTime()).toBeLessThan(new Date(p.dueAt).getTime())
+    setNow(later)
+    const b = await po.userSent('c1', 'reply', 'text', { replyToId: 'm2' })
+    expect(await store.getPending()).toHaveLength(1)
+    expect(b).toBe(later.toISOString())
+  })
+
+  it('does not batch once the reply is due', async () => {
+    const { store, po, setNow } = await setup()
+    await store.saveCompanion(makeCompanion())
+    await po.userSent('c1', 'reply', 'text', { replyToId: 'm1' })
+    const [p] = await store.getPending()
+    setNow(new Date(p.dueAt))
     await po.userSent('c1', 'reply', 'text', { replyToId: 'm2' })
     expect(await store.getPending()).toHaveLength(2)
   })

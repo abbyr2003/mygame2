@@ -15,7 +15,7 @@ interface Props {
 export function LetterView({ letter: l, companion: c, onStar, onWriteBack, onRequest }: Props): React.JSX.Element {
   const incoming = l.direction === 'in'
   const name = c?.name ?? 'someone departed'
-  const now = useNow()
+  const now = useNow(60_000, l.readAt)
   const opened = !incoming && !!l.readAt && new Date(l.readAt) <= now
   return (
     <article className="letter-view">
