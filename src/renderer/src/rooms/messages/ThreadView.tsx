@@ -4,6 +4,7 @@ import { Portrait } from '../../components/Portrait'
 import { Translatable } from '../../components/Translatable'
 import { formatWhen } from '../../format'
 import { PresenceDot } from '../../components/PresenceDot'
+import { isHere } from '../../../../shared/presence'
 import { useNow } from '../../useNow'
 
 interface Props {
@@ -40,6 +41,10 @@ export function ThreadView({ companion: c, messages, onSend }: Props): React.JSX
   }
 
   const language = c.language?.name
+  const isRead = (m: Message): boolean => !!m.readAt && new Date(m.readAt) <= now
+  const lastOut = [...messages].reverse().find((m) => m.direction === 'out')
+  const newest = messages[messages.length - 1]
+  const typing = newest?.direction === 'out' && isRead(newest) && isHere(c, now)
 
   return (
     <div className="thread parchment">
@@ -81,8 +86,21 @@ export function ThreadView({ companion: c, messages, onSend }: Props): React.JSX
                 <div className="original">{m.body}</div>
                 <time>{formatWhen(m.createdAt)}</time>
               </div>
+              {m === lastOut && m.readAt && (
+                <p className="receipt">
+                  {isRead(m) ? `Read ${formatWhen(m.readAt)}` : 'Delivered'}
+                </p>
+              )}
             </div>
           )
+        )}
+        {typing && (
+          <div className="bubble-row in">
+            <Portrait companion={c} size={36} />
+            <div className="bubble companion typing" aria-label={`${c.name} is typing`}>
+              typing…
+            </div>
+          </div>
         )}
         <div ref={end} />
       </div>

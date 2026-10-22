@@ -1662,3 +1662,21 @@ select.input {
 .presence-dot.away {
   background: var(--parchment-dim);
 }
+
+/* Read receipts under the user's last text and on sent letters. */
+.receipt {
+  margin: 2px 4px 0;
+  font-size: 0.75rem;
+  opacity: 0.7;
+  text-align: right;
+}
+.bubble.typing {
+  font-style: italic;
+  opacity: 0.75;
+}
+.bubble-row.out:has(.receipt) {
+  flex-wrap: wrap;
+}
+.bubble-row.out .receipt {
+  flex-basis: 100%;
+}

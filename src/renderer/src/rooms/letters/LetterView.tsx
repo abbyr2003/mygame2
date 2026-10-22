@@ -2,6 +2,7 @@ import type { Companion, Letter } from '../../../../shared/types'
 import { Portrait } from '../../components/Portrait'
 import { Translatable } from '../../components/Translatable'
 import { formatWhen } from '../../format'
+import { useNow } from '../../useNow'
 
 interface Props {
   letter: Letter
@@ -14,6 +15,8 @@ interface Props {
 export function LetterView({ letter: l, companion: c, onStar, onWriteBack, onRequest }: Props): React.JSX.Element {
   const incoming = l.direction === 'in'
   const name = c?.name ?? 'someone departed'
+  const now = useNow()
+  const opened = !incoming && !!l.readAt && new Date(l.readAt) <= now
   return (
     <article className="letter-view">
       <header className="letter-head">
@@ -51,6 +54,8 @@ export function LetterView({ letter: l, companion: c, onStar, onWriteBack, onReq
           <div className="original serif sent-body">{l.body}</div>
         )}
       </div>
+
+      {opened && <p className="receipt">Opened {formatWhen(l.readAt!)}</p>}
 
       {incoming && c && !c.archived && (
         <footer className="form-actions">

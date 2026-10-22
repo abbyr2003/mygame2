@@ -5,7 +5,9 @@ import { MessagesRoom } from '../../src/renderer/src/rooms/messages/MessagesRoom
 import type { Thread } from '../../src/shared/types'
 import { makeCompanion } from '../helpers/fixtures'
 import { installKeep, type FakeKeep } from '../helpers/keep'
-import { hereAt } from '../helpers/presence'
+import { awayAt, hereAt } from '../helpers/presence'
+import { formatWhen } from '../../src/renderer/src/format'
+import type { Message } from '../../src/shared/types'
 
 afterEach(() => {
   cleanup()
@@ -108,5 +110,66 @@ describe('MessagesRoom', () => {
     fireEvent.click(await screen.findByRole('button', { name: /Orion/ }))
     const header = await waitFor(() => document.querySelector('.thread-header') as HTMLElement)
     expect(within(header).getByRole('status', { name: 'here' })).toBeTruthy()
+  })
+
+  const orion = makeCompanion({ id: 'c2' })
+  const out = (over: Partial<Message>): Message => ({
+    id: 'o1',
+    direction: 'out',
+    createdAt: '2026-10-21T12:00:00.000Z',
+    body: 'Are you there?',
+    read: true,
+    ...over
+  })
+
+  async function openOrion(messages: Message[], now: Date): Promise<void> {
+    vi.useFakeTimers({ toFake: ['Date'], now })
+    threads[1] = { companionId: 'c2', messages }
+    render(<MessagesRoom />)
+    fireEvent.click(await screen.findByRole('button', { name: /Orion/ }))
+    await waitFor(() => expect(within(bubbles()).getAllByText(/./).length).toBeGreaterThan(0))
+  }
+
+  it('the last outgoing text shows Delivered before it is read', async () => {
+    const now = hereAt(orion)
+    await openOrion([out({ readAt: new Date(now.getTime() + 20_000).toISOString() })], now)
+    expect(within(bubbles()).getByText('Delivered')).toBeTruthy()
+  })
+
+  it('shows Read with the time once read', async () => {
+    const now = hereAt(orion)
+    const readAt = new Date(now.getTime() - 20_000).toISOString()
+    await openOrion([out({ readAt })], now)
+    expect(within(bubbles()).getByText(`Read ${formatWhen(readAt)}`)).toBeTruthy()
+  })
+
+  it('older messages without readAt show no receipt', async () => {
+    await openOrion([out({})], hereAt(orion))
+    expect(within(bubbles()).queryByText(/^Delivered|^Read/)).toBeNull()
+  })
+
+  it('shows typing when a here companion has read the newest message', async () => {
+    const now = hereAt(orion)
+    await openOrion([out({ readAt: new Date(now.getTime() - 5_000).toISOString() })], now)
+    expect(within(bubbles()).getByLabelText('Orion is typing')).toBeTruthy()
+  })
+
+  it('no typing when the companion is away', async () => {
+    const now = awayAt(orion)
+    await openOrion([out({ readAt: new Date(now.getTime() - 5_000).toISOString() })], now)
+    expect(within(bubbles()).queryByLabelText('Orion is typing')).toBeNull()
+  })
+
+  it('no typing when the newest message is theirs', async () => {
+    const now = hereAt(orion)
+    const readAt = new Date(now.getTime() - 60_000).toISOString()
+    await openOrion(
+      [
+        out({ readAt }),
+        { id: 'i1', direction: 'in', createdAt: now.toISOString(), body: 'I am here', read: true }
+      ],
+      now
+    )
+    expect(within(bubbles()).queryByLabelText('Orion is typing')).toBeNull()
   })
 })

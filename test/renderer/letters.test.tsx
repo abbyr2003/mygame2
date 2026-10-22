@@ -5,8 +5,12 @@ import { LettersRoom } from '../../src/renderer/src/rooms/letters/LettersRoom'
 import type { Letter } from '../../src/shared/types'
 import { makeCompanion } from '../helpers/fixtures'
 import { installKeep, type FakeKeep } from '../helpers/keep'
+import { formatWhen } from '../../src/renderer/src/format'
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  vi.useRealTimers()
+})
 
 const letter = (over: Partial<Letter>): Letter => ({
   id: 'l1',
@@ -120,5 +124,27 @@ describe('LettersRoom', () => {
     const list = screen.getByRole('list', { name: /letters/i })
     expect(within(list).getByRole('button', { name: /letter to Elara/i })).toBeTruthy()
     expect(within(list).queryByRole('button', { name: /letter from/i })).toBeNull()
+  })
+
+  async function openSent(): Promise<void> {
+    room()
+    await screen.findByRole('button', { name: /letter from Elara/i })
+    fireEvent.click(screen.getByRole('tab', { name: /sent/i }))
+    fireEvent.click(screen.getByRole('button', { name: /letter to Elara/i }))
+    await waitFor(() => expect(document.querySelector('.sent-body')).not.toBeNull())
+  }
+
+  it('a sent letter the companion has opened shows Opened', async () => {
+    vi.useFakeTimers({ toFake: ['Date'], now: new Date('2026-10-21T12:00:00.000Z') })
+    letters[2] = { ...letters[2], readAt: '2026-10-21T11:00:00.000Z' }
+    await openSent()
+    expect(screen.getByText(/^Opened/).textContent).toContain(formatWhen('2026-10-21T11:00:00.000Z'))
+  })
+
+  it('a sent letter not yet opened shows no receipt', async () => {
+    vi.useFakeTimers({ toFake: ['Date'], now: new Date('2026-10-21T12:00:00.000Z') })
+    letters[2] = { ...letters[2], readAt: '2026-10-21T13:00:00.000Z' }
+    await openSent()
+    expect(screen.queryByText(/^Opened/)).toBeNull()
   })
 })
