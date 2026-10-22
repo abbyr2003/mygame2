@@ -1,4 +1,4 @@
-export type Frequency = 'chatty' | 'regular' | 'quiet' | 'rare'
+export type Frequency = 'devoted' | 'chatty' | 'regular' | 'quiet' | 'rare'
 export type FormatPref = 'letters' | 'texts' | 'both'
 export type LanguageUsage = 'rarely' | 'sometimes' | 'always'
 export type Format = 'letter' | 'text'
@@ -39,6 +39,8 @@ export interface Letter {
   read: boolean
   starred: boolean
   requestText?: string
+  // Outgoing only: when the companion opens it.
+  readAt?: string
 }
 
 export interface Message {
@@ -49,6 +51,8 @@ export interface Message {
   language?: string
   translation?: string
   read: boolean
+  // Outgoing only: when the companion reads it.
+  readAt?: string
 }
 
 export interface Thread {
@@ -86,6 +90,8 @@ export interface PendingDelivery {
   dueAt: string
   replyToId?: string
   requestText?: string
+  // When the companion reads the message this answers.
+  readAt?: string
   attempts: number
 }
 
