@@ -1646,3 +1646,19 @@ select.input {
   color: var(--gold);
   font-weight: 600;
 }
+
+/* Presence: whether a companion is here right now. */
+.presence-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid var(--outline);
+  vertical-align: middle;
+}
+.presence-dot.here {
+  background: var(--teal);
+}
+.presence-dot.away {
+  background: var(--parchment-dim);
+}

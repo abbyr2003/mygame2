@@ -1,12 +1,16 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
-import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, cleanup, waitFor, within } from '@testing-library/react'
 import { ContactsRoom } from '../../src/renderer/src/rooms/contacts/ContactsRoom'
 import type { Companion } from '../../src/shared/types'
 import { makeCompanion } from '../helpers/fixtures'
 import { installKeep } from '../helpers/keep'
+import { awayAt, hereAt } from '../helpers/presence'
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  vi.useRealTimers()
+})
 
 let companions: Companion[]
 let keep: ReturnType<typeof installKeep>
@@ -92,6 +96,32 @@ describe('ContactsRoom', () => {
       language: { name: 'Latin', usage: 'always' }
     })
     expect(portrait).toBe('C:/pics/elara.png')
+  })
+
+  it('offers a devoted frequency', async () => {
+    await openNewForm()
+    fill(/^name/i, 'Selene')
+    fireEvent.change(screen.getByLabelText(/^role/i), { target: { value: 'ancestor' } })
+    fill(/personality/i, 'Warm')
+    const devoted = screen.getByRole('button', { name: /^devoted/i })
+    expect(devoted.textContent).toContain('many times a day')
+    fireEvent.click(devoted)
+    fireEvent.click(screen.getByRole('button', { name: /^save/i }))
+    await waitFor(() => expect(keep.companions.create).toHaveBeenCalled())
+    expect(keep.companions.create.mock.calls[0][0]).toMatchObject({ frequency: 'devoted' })
+  })
+
+  it('cards show whether a companion is here or away', async () => {
+    const c = companions[0]
+    vi.useFakeTimers({ toFake: ['Date'], now: hereAt(c) })
+    const { unmount } = render(<ContactsRoom onAskSource={() => {}} />)
+    const card = await screen.findByRole('button', { name: /Elara/ })
+    expect(within(card).getByRole('status', { name: 'here' })).toBeTruthy()
+    unmount()
+    vi.setSystemTime(awayAt(c))
+    render(<ContactsRoom onAskSource={() => {}} />)
+    const again = await screen.findByRole('button', { name: /Elara/ })
+    expect(within(again).getByRole('status', { name: 'away' })).toBeTruthy()
   })
 
   it('a custom role is used when "other" is chosen', async () => {

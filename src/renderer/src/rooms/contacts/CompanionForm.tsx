@@ -14,6 +14,7 @@ export const ROLES = [
 ]
 
 const FREQUENCIES: { value: Frequency; hint: string }[] = [
+  { value: 'devoted', hint: 'many times a day' },
   { value: 'chatty', hint: 'a few texts a day' },
   { value: 'regular', hint: 'about once a day' },
   { value: 'quiet', hint: '2–3 a week' },

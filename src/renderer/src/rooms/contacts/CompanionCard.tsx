@@ -1,6 +1,8 @@
 import type { Companion } from '../../../../shared/types'
 import { Portrait } from '../../components/Portrait'
 import { sealGlyph } from '../../components/seal'
+import { PresenceDot } from '../../components/PresenceDot'
+import { useNow } from '../../useNow'
 
 interface Props {
   companion: Companion
@@ -9,6 +11,7 @@ interface Props {
 }
 
 export function CompanionCard({ companion: c, selected, onSelect }: Props): React.JSX.Element {
+  const now = useNow()
   return (
     <button
       type="button"
@@ -17,7 +20,9 @@ export function CompanionCard({ companion: c, selected, onSelect }: Props): Reac
     >
       <Portrait companion={c} size={64} />
       <span className="companion-card-text">
-        <span className="companion-name">{c.name}</span>
+        <span className="companion-name">
+          {c.name} {!c.archived && <PresenceDot companion={c} now={now} />}
+        </span>
         <span className="companion-role">{c.role}</span>
         <span className="chips">
           <span className="chip">{c.frequency}</span>

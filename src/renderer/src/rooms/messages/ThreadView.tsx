@@ -3,6 +3,8 @@ import type { Companion, Message } from '../../../../shared/types'
 import { Portrait } from '../../components/Portrait'
 import { Translatable } from '../../components/Translatable'
 import { formatWhen } from '../../format'
+import { PresenceDot } from '../../components/PresenceDot'
+import { useNow } from '../../useNow'
 
 interface Props {
   companion: Companion
@@ -15,6 +17,7 @@ export function ThreadView({ companion: c, messages, onSend }: Props): React.JSX
   const [sending, setSending] = useState(false)
   const [failed, setFailed] = useState(false)
   const end = useRef<HTMLDivElement>(null)
+  const now = useNow()
 
   useEffect(() => {
     end.current?.scrollIntoView?.({ block: 'end' })
@@ -43,7 +46,9 @@ export function ThreadView({ companion: c, messages, onSend }: Props): React.JSX
       <header className="thread-header">
         <Portrait companion={c} size={52} />
         <div>
-          <h2>{c.name}</h2>
+          <h2>
+            {c.name} <PresenceDot companion={c} now={now} />
+          </h2>
           <p>
             {c.role}
             {language && <span className="tag">writes in {language}</span>}

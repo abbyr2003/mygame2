@@ -5,8 +5,12 @@ import { MessagesRoom } from '../../src/renderer/src/rooms/messages/MessagesRoom
 import type { Thread } from '../../src/shared/types'
 import { makeCompanion } from '../helpers/fixtures'
 import { installKeep, type FakeKeep } from '../helpers/keep'
+import { hereAt } from '../helpers/presence'
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  vi.useRealTimers()
+})
 
 const bubbles = (): HTMLElement => document.querySelector('.bubbles') as HTMLElement
 
@@ -96,5 +100,13 @@ describe('MessagesRoom', () => {
     await waitFor(() => expect(within(bubbles()).getByText('Are you awake?')).toBeTruthy())
     fireEvent.click(within(bubbles()).getAllByRole('button', { name: /translate/i })[1])
     await waitFor(() => expect(keep.messages.translate).toHaveBeenCalledWith('c1', 'm2'))
+  })
+
+  it('thread header shows the companion is here', async () => {
+    vi.useFakeTimers({ toFake: ['Date'], now: hereAt(makeCompanion({ id: 'c2' })) })
+    render(<MessagesRoom />)
+    fireEvent.click(await screen.findByRole('button', { name: /Orion/ }))
+    const header = await waitFor(() => document.querySelector('.thread-header') as HTMLElement)
+    expect(within(header).getByRole('status', { name: 'here' })).toBeTruthy()
   })
 })
