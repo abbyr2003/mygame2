@@ -90,22 +90,27 @@ export function createHandlers(d: IpcDeps): InvokableApi {
         changed()
       },
       async send(companionId, body) {
+        const id = randomUUID()
+        const readAt = await d.postOffice.userSent(companionId, 'reply', 'letter', { replyToId: id })
         const letter: Letter = {
-          id: randomUUID(),
+          id,
           companionId,
           direction: 'out',
           kind: 'user',
           createdAt: stamp(),
           body,
           read: true,
-          starred: false
+          starred: false,
+          ...(readAt ? { readAt } : {})
         }
         await store.saveLetter(letter)
-        await d.postOffice.userSent(companionId, 'reply', 'letter', { replyToId: letter.id })
         changed()
         return letter
       },
       async request(companionId, text) {
+        const readAt = await d.postOffice.userSent(companionId, 'request', 'letter', {
+          requestText: text
+        })
         await store.saveLetter({
           id: randomUUID(),
           companionId,
@@ -115,9 +120,9 @@ export function createHandlers(d: IpcDeps): InvokableApi {
           body: text,
           requestText: text,
           read: true,
-          starred: false
+          starred: false,
+          ...(readAt ? { readAt } : {})
         })
-        await d.postOffice.userSent(companionId, 'request', 'letter', { requestText: text })
         changed()
       },
       translate: (id) => d.voice.translateLetter(id)
@@ -126,16 +131,18 @@ export function createHandlers(d: IpcDeps): InvokableApi {
     messages: {
       threads: () => store.listThreads(),
       async send(companionId, body) {
+        const id = randomUUID()
+        const readAt = await d.postOffice.userSent(companionId, 'reply', 'text', { replyToId: id })
         const message: Message = {
-          id: randomUUID(),
+          id,
           direction: 'out',
           createdAt: stamp(),
           body,
-          read: true
+          read: true,
+          ...(readAt ? { readAt } : {})
         }
         const thread = await store.getThread(companionId)
         await store.saveThread({ ...thread, messages: [...thread.messages, message] })
-        await d.postOffice.userSent(companionId, 'reply', 'text', { replyToId: message.id })
         changed()
         return message
       },

@@ -76,7 +76,8 @@ app.whenReady().then(async () => {
       emit('delivered', item)
       emit('changed')
     },
-    onVeil: () => emit('veil')
+    onVeil: () => emit('veil'),
+    onChanged: () => emit('changed')
   })
 
   protocol.handle('keep', (request) => {

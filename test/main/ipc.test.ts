@@ -16,6 +16,7 @@ async function setup(testKey: () => Promise<void> = async () => {}) {
   const created: Companion[] = []
   let key: string | null = null
   const events: string[] = []
+  const receipt: { readAt: string | undefined } = { readAt: '2026-10-21T12:00:20.000Z' }
   const deps: IpcDeps = {
     store,
     postOffice: {
@@ -25,6 +26,7 @@ async function setup(testKey: () => Promise<void> = async () => {}) {
       },
       userSent: async (...args) => {
         sent.push(args)
+        return receipt.readAt
       }
     },
     voice: {
@@ -51,7 +53,16 @@ async function setup(testKey: () => Promise<void> = async () => {}) {
     now: () => now,
     emit: (e) => events.push(e)
   }
-  return { store, deps, handlers: createHandlers(deps), sent, created, events, getKey: () => key }
+  return {
+    store,
+    deps,
+    handlers: createHandlers(deps),
+    sent,
+    created,
+    events,
+    receipt,
+    getKey: () => key
+  }
 }
 
 const input = {
@@ -167,5 +178,28 @@ describe('ipc handlers', () => {
       code: 'unavailable'
     })
     expect(await channels.get(channelFor('companions', 'list'))!()).toEqual({ ok: true, value: [] })
+  })
+
+  it('messages.send stores the readAt from userSent', async () => {
+    const { handlers, store } = await setup()
+    const m = await handlers.messages.send('c1', 'hello')
+    expect(m.readAt).toBe('2026-10-21T12:00:20.000Z')
+    expect((await store.getThread('c1')).messages[0].readAt).toBe('2026-10-21T12:00:20.000Z')
+  })
+
+  it('letters.send and letters.request store the readAt from userSent', async () => {
+    const { handlers, store } = await setup()
+    await handlers.letters.send('c1', 'dear one')
+    await handlers.letters.request('c1', 'the stars')
+    const letters = await store.listLetters()
+    expect(letters).toHaveLength(2)
+    expect(letters.every((l) => l.readAt === '2026-10-21T12:00:20.000Z')).toBe(true)
+  })
+
+  it('saves without readAt when userSent returns undefined', async () => {
+    const { handlers, store, receipt } = await setup()
+    receipt.readAt = undefined
+    await handlers.messages.send('c1', 'hello')
+    expect('readAt' in (await store.getThread('c1')).messages[0]).toBe(false)
   })
 })

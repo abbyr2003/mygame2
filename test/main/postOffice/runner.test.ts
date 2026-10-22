@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { KeepStore } from '../../../src/main/keep/store'
 import { PostOffice } from '../../../src/main/postOffice/runner'
 import { VoiceError } from '../../../src/main/voice/claudeClient'
@@ -6,7 +6,7 @@ import type { PendingDelivery } from '../../../src/shared/types'
 import { tempDir } from '../../helpers/tmp'
 import { makeCompanion } from '../../helpers/fixtures'
 import { seededRng } from '../../helpers/rng'
-import { isHere } from '../../../src/shared/presence'
+import { isHere, visitsOn } from '../../../src/shared/presence'
 
 const DAY = 24 * 3600_000
 const MIN = 60_000
@@ -17,6 +17,7 @@ async function setup(opts: { fail?: VoiceError; slow?: boolean } = {}) {
   let now = new Date('2026-10-21T12:00:00.000Z')
   const delivered: string[] = []
   const events: string[] = []
+  let changes = 0
   const voice = {
     deliver: async (p: PendingDelivery) => {
       if (opts.slow) await new Promise((r) => setTimeout(r, 10))
@@ -29,7 +30,8 @@ async function setup(opts: { fail?: VoiceError; slow?: boolean } = {}) {
     now: () => now,
     rng: seededRng(42),
     onDelivered: (item) => events.push(`delivered:${item.companionId}:${item.format}`),
-    onVeil: () => events.push('veil')
+    onVeil: () => events.push('veil'),
+    onChanged: () => changes++
   })
   return {
     store,
@@ -37,7 +39,8 @@ async function setup(opts: { fail?: VoiceError; slow?: boolean } = {}) {
     delivered,
     events,
     setNow: (d: Date) => (now = d),
-    getNow: () => now
+    getNow: () => now,
+    changes: () => changes
   }
 }
 
@@ -49,6 +52,18 @@ const due = (over: Partial<PendingDelivery>): PendingDelivery => ({
   dueAt: '2026-10-21T11:00:00.000Z',
   attempts: 0,
   ...over
+})
+
+// One minute into a visit of companion c1 with at least 10 minutes left.
+function hereTime(): Date {
+  const c = makeCompanion()
+  const day = Math.floor(new Date('2026-10-21T12:00:00.000Z').getTime() / DAY)
+  const v = visitsOn(c, day).find((x) => x.end - x.start > 11 * MIN)!
+  return new Date(v.start + MIN)
+}
+
+afterEach(() => {
+  vi.useRealTimers()
 })
 
 describe('PostOffice', () => {
@@ -130,9 +145,91 @@ describe('PostOffice', () => {
     await po.userSent('c1', 'reply', 'text', { replyToId: 'm1' })
     await po.processDue()
     expect(delivered).toEqual([])
-    setNow(new Date(getNow().getTime() + 25 * MIN))
+    const [p] = await store.getPending()
+    setNow(new Date(p.dueAt))
     await po.processDue()
     expect(delivered).toHaveLength(1)
+  })
+
+  it('userSent returns readAt and stores it on the pending reply', async () => {
+    const { store, po } = await setup()
+    await store.saveCompanion(makeCompanion())
+    const readAt = await po.userSent('c1', 'reply', 'text', { replyToId: 'm1' })
+    const [p] = await store.getPending()
+    expect(readAt).toBeDefined()
+    expect(p.readAt).toBe(readAt)
+  })
+
+  it('batches texts while the first is still unread', async () => {
+    const { store, po } = await setup()
+    await store.saveCompanion(makeCompanion())
+    const a = await po.userSent('c1', 'reply', 'text', { replyToId: 'm1' })
+    const b = await po.userSent('c1', 'reply', 'text', { replyToId: 'm2' })
+    expect(await store.getPending()).toHaveLength(1)
+    expect(b).toBe(a)
+  })
+
+  it('does not batch once the companion has read', async () => {
+    const { store, po, setNow } = await setup()
+    await store.saveCompanion(makeCompanion())
+    const a = await po.userSent('c1', 'reply', 'text', { replyToId: 'm1' })
+    setNow(new Date(new Date(a!).getTime() + 1000))
+    await po.userSent('c1', 'reply', 'text', { replyToId: 'm2' })
+    expect(await store.getPending()).toHaveLength(2)
+  })
+
+  it('does not batch letters', async () => {
+    const { store, po } = await setup()
+    await store.saveCompanion(makeCompanion())
+    await po.userSent('c1', 'reply', 'letter', { replyToId: 'l1' })
+    await po.userSent('c1', 'reply', 'letter', { replyToId: 'l2' })
+    expect(await store.getPending()).toHaveLength(2)
+  })
+
+  it('userSent to an archived companion returns undefined', async () => {
+    const { store, po } = await setup()
+    await store.saveCompanion(makeCompanion({ archived: true }))
+    expect(await po.userSent('c1', 'reply', 'text', { replyToId: 'm1' })).toBeUndefined()
+    expect(await store.getPending()).toEqual([])
+  })
+
+  it('wake timer delivers a live reply before the 3-minute tick', async () => {
+    const { store, po, delivered, setNow, changes } = await setup()
+    setNow(hereTime())
+    await store.saveCompanion(makeCompanion())
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval'] })
+    po.start()
+    await po.userSent('c1', 'reply', 'text', { replyToId: 'm1' })
+    const [p] = await store.getPending()
+    const wait = new Date(p.dueAt).getTime() - hereTime().getTime() + 1000
+    expect(wait).toBeLessThan(3 * MIN)
+    setNow(new Date(new Date(p.dueAt).getTime() + 1000))
+    await vi.advanceTimersByTimeAsync(wait)
+    await vi.waitFor(() => expect(delivered).toEqual([p.id]))
+    expect(changes()).toBeGreaterThan(0)
+    po.stop()
+  })
+
+  it('old pending without readAt is still delivered', async () => {
+    const { store, po, delivered } = await setup()
+    await store.saveCompanion(makeCompanion())
+    await store.savePending([due({ id: 'old' })])
+    await po.tick()
+    expect(delivered).toEqual(['old'])
+  })
+
+  it('stop clears the wake timer', async () => {
+    const { store, po, delivered, setNow } = await setup()
+    setNow(hereTime())
+    await store.saveCompanion(makeCompanion())
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval'] })
+    po.start()
+    await po.userSent('c1', 'reply', 'text', { replyToId: 'm1' })
+    po.stop()
+    const [p] = await store.getPending()
+    setNow(new Date(new Date(p.dueAt).getTime() + 1000))
+    await vi.advanceTimersByTimeAsync(10 * MIN)
+    expect(delivered).toEqual([])
   })
 
   it('companionCreated schedules first contact during a visit', async () => {
