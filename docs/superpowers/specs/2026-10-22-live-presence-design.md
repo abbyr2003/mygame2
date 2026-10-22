@@ -46,17 +46,16 @@ reach out more often. Cost stays under the user's control.
 
 ## Architecture
 
-### `src/main/postOffice/presence.ts` (new, pure)
+### `src/shared/presence.ts` (new, pure; shared so the window can use it directly)
 - `isHere(companion, at: Date): boolean`
 - `nextHereStart(companion, from: Date): Date`, which returns `from` if already here.
-- Time is split into fixed 15-minute slots. Each companion has a seeded hash of
-  `(companion.id, visit index)` that builds visits of 30–90 minutes with gaps sized
-  so the long-run here share matches the frequency. The result must be identical
+- Each UTC day gets its own visit list from a generator seeded by
+  `(companion.id, day number)`. Gaps and visits of 30–90 minutes alternate, with gaps
+  sized so the long-run here share matches the frequency. The result is identical
   across calls and restarts.
 - `nextHereStart` scans forward and is capped at 14 days (it returns the cap if no
   visit is found).
-- Exposed to the renderer through a `presence(companionId)` IPC call that returns
-  `{ here: boolean }`. The renderer polls it every 60 seconds and on `changed` events.
+- The renderer imports it directly and re-checks every 60 seconds. No IPC is needed.
 
 ### Scheduling (`schedule.ts`, `rates.ts`, `runner.ts`)
 - `rates.ts`: add `devoted: 3.5` to `MEAN_INTERVAL_HOURS`, add `HERE_SHARE`,
@@ -75,16 +74,15 @@ reach out more often. Cost stays under the user's control.
 - `Frequency` adds `'devoted'`.
 - `Message` and `Letter` gain an optional `readAt?: string`, used only on outgoing items.
 - `PendingDelivery` gains an optional `readAt?: string`, the moment the companion
-  reads the message it answers (used for the typing indicator).
+  reads the message it answers (used for batching and for the precise timer).
 - No migration is needed: missing `readAt` shows no receipt.
 
 ### UI
 - `CompanionForm`: adds a "devoted" option with the hint "many times a day".
 - `CompanionCard` and `ThreadView` header show the status dot.
 - `ThreadView`: under the user's last outgoing text it shows *Delivered* or
-  *Read <time>* (`readAt <= now`). It shows a *typing…* bubble when a pending text
-  reply for this companion has `readAt <= now` and the companion is here.
-  The renderer gets this through a `typing(companionId)` IPC call returning a boolean.
+  *Read <time>* (`readAt <= now`). It shows a *typing…* bubble when the newest message
+  in the thread is the user's, its `readAt <= now`, and the companion is here.
 - Letters view: an outgoing letter shows *Opened <time>* once `readAt <= now`.
 
 ## Error handling
