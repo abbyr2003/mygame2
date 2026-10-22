@@ -38,6 +38,16 @@ interface Item extends RecentItem {
   companionId: string
 }
 
+// The user's texts since the companion last texted, so one reply answers them all.
+function unansweredTexts(items: Item[]): string {
+  const texts = items.filter((i) => i.format === 'text')
+  const lastTheirs = texts.map((i) => i.from).lastIndexOf('them')
+  return texts
+    .slice(lastTheirs + 1)
+    .map((i) => i.text)
+    .join('\n')
+}
+
 export class Voice {
   constructor(
     private readonly store: KeepStore,
@@ -81,7 +91,9 @@ export class Voice {
       .filter((c) => c.id !== companion.id && !c.archived)
       .map((c) => ({ name: c.name, role: c.role }))
     const items = (await this.allItems()).filter((i) => i.companionId === companion.id)
-    const replyTo = p.replyToId ? items.find((i) => i.id === p.replyToId)?.text : undefined
+    const replyTo =
+      (p.format === 'text' && p.kind === 'reply' ? unansweredTexts(items) : '') ||
+      (p.replyToId ? items.find((i) => i.id === p.replyToId)?.text : undefined)
 
     const body = await this.claude.complete({
       ...companionPrompt({

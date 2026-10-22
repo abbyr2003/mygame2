@@ -97,6 +97,38 @@ describe('Voice.deliver', () => {
     expect(companionCall.messages[0].content).toContain('I miss you')
   })
 
+  it('a text reply answers every unanswered text', async () => {
+    const { store, voice, calls } = await setup()
+    const msg = (id: string, direction: 'in' | 'out', at: string, body: string) => ({
+      id,
+      direction,
+      createdAt: `2026-10-21T10:0${at}:00.000Z`,
+      body,
+      read: true
+    })
+    await store.saveThread({
+      companionId: 'c1',
+      messages: [msg('m0', 'in', '0', 'hi'), msg('m1', 'out', '1', 'one'), msg('m2', 'out', '2', 'two')]
+    })
+    await voice.deliver(pending({ kind: 'reply', format: 'text', replyToId: 'm2' }), now)
+    const companionCall = calls.find((c) => kindOf(c) === 'companion')!
+    expect(companionCall.messages[0].content).toContain('"""one\ntwo"""')
+  })
+
+  it('a text reply falls back to replyToId when nothing is unanswered', async () => {
+    const { store, voice, calls } = await setup()
+    await store.saveThread({
+      companionId: 'c1',
+      messages: [
+        { id: 'm1', direction: 'out', createdAt: '2026-10-21T10:01:00.000Z', body: 'one', read: true },
+        { id: 'r1', direction: 'in', createdAt: '2026-10-21T10:02:00.000Z', body: 'reply', read: true }
+      ]
+    })
+    await voice.deliver(pending({ kind: 'reply', format: 'text', replyToId: 'm1' }), now)
+    const companionCall = calls.find((c) => kindOf(c) === 'companion')!
+    expect(companionCall.messages[0].content).toContain('"""one"""')
+  })
+
   it('delivering the same pending twice keeps one letter', async () => {
     const { store, voice } = await setup()
     await voice.deliver(pending(), now)
