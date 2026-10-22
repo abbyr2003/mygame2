@@ -10,13 +10,17 @@ import {
   FIRST_CONTACT_MINUTES,
   LETTER_SHARE_WHEN_BOTH,
   MEAN_INTERVAL_HOURS,
-  REPLY_DELAY_MINUTES
+  READ_DELAY_SECONDS,
+  REPLY_AFTER_READ_SECONDS,
+  VISIT_JITTER_MINUTES
 } from './rates'
+import { isHere, nextHereStart } from '../../shared/presence'
 
 export type Rng = () => number
 
 const HOUR = 3600_000
 const MIN = 60_000
+const SEC = 1000
 
 // Exponential draw around the mean, clamped so arrivals are never
 // back-to-back or absurdly far apart.
@@ -34,12 +38,18 @@ export function pickFormat(pref: FormatPref, rng: Rng): Format {
 
 const between = ([lo, hi]: [number, number], rng: Rng): number => lo + (hi - lo) * rng()
 
+// Companions only reach out while here; an away time waits for the next visit.
+export function intoVisit(c: Companion, at: Date, rng: Rng): Date {
+  if (isHere(c, at)) return at
+  return new Date(nextHereStart(c, at).getTime() + between(VISIT_JITTER_MINUTES, rng) * MIN)
+}
+
 function delivery(
   c: Companion,
   kind: PendingDelivery['kind'],
   format: Format,
   dueAt: Date,
-  extra: { replyToId?: string; requestText?: string } = {}
+  extra: { replyToId?: string; requestText?: string; readAt?: string } = {}
 ): PendingDelivery {
   return {
     id: randomUUID(),
@@ -68,7 +78,8 @@ export function catchUp(
   const deliveries: PendingDelivery[] = []
   let t = new Date(c.nextSpontaneousAt).getTime()
   while (t <= now.getTime()) {
-    deliveries.push(delivery(c, 'spontaneous', pickFormat(c.formatPref, rng), new Date(t)))
+    const at = intoVisit(c, new Date(t), rng)
+    deliveries.push(delivery(c, 'spontaneous', pickFormat(c.formatPref, rng), at))
     t += nextInterval(c.frequency, rng)
   }
   return {
@@ -85,11 +96,14 @@ export function scheduleReply(
   rng: Rng,
   extra: { replyToId?: string; requestText?: string }
 ): PendingDelivery {
-  const due = new Date(now.getTime() + between(REPLY_DELAY_MINUTES[c.frequency], rng) * MIN)
-  return delivery(c, kind, format, due, extra)
+  const where = isHere(c, now) ? 'here' : 'away'
+  const from = where === 'here' ? now : nextHereStart(c, now)
+  const read = from.getTime() + between(READ_DELAY_SECONDS[format][where], rng) * SEC
+  const due = new Date(read + between(REPLY_AFTER_READ_SECONDS[format][where], rng) * SEC)
+  return delivery(c, kind, format, due, { ...extra, readAt: new Date(read).toISOString() })
 }
 
 export function scheduleFirstContact(c: Companion, now: Date, rng: Rng): PendingDelivery {
-  const due = new Date(now.getTime() + between(FIRST_CONTACT_MINUTES, rng) * MIN)
+  const due = intoVisit(c, new Date(now.getTime() + between(FIRST_CONTACT_MINUTES, rng) * MIN), rng)
   return delivery(c, 'first-contact', pickFormat(c.formatPref, rng), due)
 }

@@ -6,6 +6,7 @@ import type { PendingDelivery } from '../../../src/shared/types'
 import { tempDir } from '../../helpers/tmp'
 import { makeCompanion } from '../../helpers/fixtures'
 import { seededRng } from '../../helpers/rng'
+import { isHere } from '../../../src/shared/presence'
 
 const DAY = 24 * 3600_000
 const MIN = 60_000
@@ -134,14 +135,14 @@ describe('PostOffice', () => {
     expect(delivered).toHaveLength(1)
   })
 
-  it('companionCreated schedules first contact within 5 minutes', async () => {
+  it('companionCreated schedules first contact during a visit', async () => {
     const { store, po, getNow } = await setup()
     const c = await po.companionCreated(makeCompanion())
     const [p] = await store.getPending()
     expect(p.kind).toBe('first-contact')
     const mins = (new Date(p.dueAt).getTime() - getNow().getTime()) / MIN
     expect(mins).toBeGreaterThanOrEqual(1)
-    expect(mins).toBeLessThanOrEqual(5)
+    expect(isHere(c, new Date(p.dueAt))).toBe(true)
     expect(new Date(c.nextSpontaneousAt!).getTime()).toBeGreaterThan(getNow().getTime())
     expect((await store.getCompanion('c1'))!.nextSpontaneousAt).toBe(c.nextSpontaneousAt)
   })
